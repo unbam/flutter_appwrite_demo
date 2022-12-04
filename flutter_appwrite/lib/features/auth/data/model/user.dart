@@ -9,7 +9,7 @@ class User with _$User {
     @JsonKey(name: '\$id') required String id,
     required String name,
     required String email,
-    String? iconUrl,
+    String? iconFileId,
   }) = _User;
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

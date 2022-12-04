@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../profile/presentation/page/profile_page.dart';
 import '../notifier/auth_notifier.dart';
+import 'profile_page.dart';
 
 ///
 /// 認証ページ
@@ -28,16 +28,16 @@ class AuthPage extends HookConsumerWidget {
               height: 10,
             ),
             ElevatedButton(
-              child: const Text('ユーザー作成'),
+              child: const Text('1. ユーザー作成'),
               onPressed: () async {
-                authNotifier.create('test', 'unbamwork@gmail.com', 'password');
+                authNotifier.create('test', 'test@example.com', 'password');
               },
             ),
             const SizedBox(
               height: 10,
             ),
             ElevatedButton(
-              child: const Text('ドキュメント作成'),
+              child: const Text('2. ドキュメント作成'),
               onPressed: () async {
                 authNotifier.createDocumentUser();
               },
@@ -46,16 +46,25 @@ class AuthPage extends HookConsumerWidget {
               height: 10,
             ),
             ElevatedButton(
-              child: const Text('ログイン'),
+              child: const Text('3. ログイン'),
               onPressed: () async {
-                authNotifier.login('unbamwork@gmail.com', 'password');
+                authNotifier.login('test@example.com', 'password');
               },
             ),
             const SizedBox(
               height: 10,
             ),
             ElevatedButton(
-              child: const Text('ユーザー編集'),
+              child: const Text('4. ドキュメント読込'),
+              onPressed: () async {
+                authNotifier.getDocumentUser();
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              child: const Text('5. ユーザー編集'),
               onPressed: () async {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -68,7 +77,7 @@ class AuthPage extends HookConsumerWidget {
               height: 10,
             ),
             ElevatedButton(
-              child: const Text('ログアウト'),
+              child: const Text('6. ログアウト'),
               onPressed: () async {
                 authNotifier.logout();
               },

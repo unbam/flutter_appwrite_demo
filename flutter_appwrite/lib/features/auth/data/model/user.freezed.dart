@@ -24,7 +24,7 @@ mixin _$User {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
-  String? get iconUrl => throw _privateConstructorUsedError;
+  String? get iconFileId => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -40,7 +40,7 @@ abstract class $UserCopyWith<$Res> {
       {@JsonKey(name: '\$id') String id,
       String name,
       String email,
-      String? iconUrl});
+      String? iconFileId});
 }
 
 /// @nodoc
@@ -59,7 +59,7 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? iconUrl = freezed,
+    Object? iconFileId = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -74,9 +74,9 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      iconUrl: freezed == iconUrl
-          ? _value.iconUrl
-          : iconUrl // ignore: cast_nullable_to_non_nullable
+      iconFileId: freezed == iconFileId
+          ? _value.iconFileId
+          : iconFileId // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -92,7 +92,7 @@ abstract class _$$_UserCopyWith<$Res> implements $UserCopyWith<$Res> {
       {@JsonKey(name: '\$id') String id,
       String name,
       String email,
-      String? iconUrl});
+      String? iconFileId});
 }
 
 /// @nodoc
@@ -107,7 +107,7 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
     Object? id = null,
     Object? name = null,
     Object? email = null,
-    Object? iconUrl = freezed,
+    Object? iconFileId = freezed,
   }) {
     return _then(_$_User(
       id: null == id
@@ -122,9 +122,9 @@ class __$$_UserCopyWithImpl<$Res> extends _$UserCopyWithImpl<$Res, _$_User>
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
               as String,
-      iconUrl: freezed == iconUrl
-          ? _value.iconUrl
-          : iconUrl // ignore: cast_nullable_to_non_nullable
+      iconFileId: freezed == iconFileId
+          ? _value.iconFileId
+          : iconFileId // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -137,7 +137,7 @@ class _$_User implements _User {
       {@JsonKey(name: '\$id') required this.id,
       required this.name,
       required this.email,
-      this.iconUrl});
+      this.iconFileId});
 
   factory _$_User.fromJson(Map<String, dynamic> json) => _$$_UserFromJson(json);
 
@@ -149,11 +149,11 @@ class _$_User implements _User {
   @override
   final String email;
   @override
-  final String? iconUrl;
+  final String? iconFileId;
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, iconUrl: $iconUrl)';
+    return 'User(id: $id, name: $name, email: $email, iconFileId: $iconFileId)';
   }
 
   @override
@@ -164,12 +164,13 @@ class _$_User implements _User {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
-            (identical(other.iconUrl, iconUrl) || other.iconUrl == iconUrl));
+            (identical(other.iconFileId, iconFileId) ||
+                other.iconFileId == iconFileId));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, email, iconUrl);
+  int get hashCode => Object.hash(runtimeType, id, name, email, iconFileId);
 
   @JsonKey(ignore: true)
   @override
@@ -190,7 +191,7 @@ abstract class _User implements User {
       {@JsonKey(name: '\$id') required final String id,
       required final String name,
       required final String email,
-      final String? iconUrl}) = _$_User;
+      final String? iconFileId}) = _$_User;
 
   factory _User.fromJson(Map<String, dynamic> json) = _$_User.fromJson;
 
@@ -202,7 +203,7 @@ abstract class _User implements User {
   @override
   String get email;
   @override
-  String? get iconUrl;
+  String? get iconFileId;
   @override
   @JsonKey(ignore: true)
   _$$_UserCopyWith<_$_User> get copyWith => throw _privateConstructorUsedError;

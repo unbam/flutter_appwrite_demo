@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:appwrite/appwrite.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../constants/constant.dart';
@@ -22,6 +23,7 @@ class AuthNotifier extends StateNotifier<User?> {
   final MyClient _myClient;
   late Account account;
   late Databases databases;
+  late Storage storage;
   late String _sessionId;
 
   ///
@@ -30,6 +32,7 @@ class AuthNotifier extends StateNotifier<User?> {
   void init() {
     account = Account(_myClient.client);
     databases = Databases(_myClient.client);
+    storage = Storage(_myClient.client);
   }
 
   ///
@@ -68,7 +71,7 @@ class AuthNotifier extends StateNotifier<User?> {
         collectionId: Constant.userCollectionId,
         documentId: state!.id,
         data: {
-          'iconUrl': null,
+          'iconFileId': null,
         },
       );
 
@@ -76,6 +79,30 @@ class AuthNotifier extends StateNotifier<User?> {
       log(document.toMap().toString());
     } on AppwriteException catch (e) {
       log('createUser: ${e.message!}');
+    }
+  }
+
+  ///
+  /// ユーザーのドキュメント読込
+  ///
+  Future<void> getDocumentUser() async {
+    if (state == null) {
+      return;
+    }
+
+    try {
+      final document = await databases.getDocument(
+        databaseId: Constant.databaseId,
+        collectionId: Constant.userCollectionId,
+        documentId: state!.id,
+      );
+
+      log('getDocumentUser: success');
+      log(document.toMap().toString());
+
+      state = state!.copyWith(iconFileId: document.data['iconFileId']);
+    } on AppwriteException catch (e) {
+      log('getDocumentUser: ${e.message!}');
     }
   }
 
@@ -128,15 +155,50 @@ class AuthNotifier extends StateNotifier<User?> {
 
   ///
   /// アイコン変更
-  /// @param iconUrl: アイコンURL
+  /// @param originalIconUrl: アイコンURL
+  /// @param fileName: ファイル名
   ///
-  Future<void> updateIconUrl(String iconUrl) async {
+  Future<void> updateIcon(String originalIconUrl, String fileName) async {
     try {
-      state = state?.copyWith(iconUrl: iconUrl);
-      log('updateIconUrl: success');
+      final result = await storage.createFile(
+        bucketId: Constant.bucketId,
+        fileId: ID.unique(),
+        file: InputFile(path: originalIconUrl, filename: fileName),
+      );
+      log('updateIconUrl createFile: success');
+      log(result.toMap().toString());
+
+      state = state?.copyWith(iconFileId: result.$id);
+
+      await databases.updateDocument(
+        databaseId: Constant.databaseId,
+        collectionId: Constant.userCollectionId,
+        documentId: state!.id,
+        data: {
+          'iconFileId': result.$id,
+        },
+      );
+      log('updateIcon updateDocument: success');
     } on AppwriteException catch (e) {
-      log('updateIconUrl: ${e.message!}');
+      log('updateIcon: ${e.message!}');
     }
+  }
+
+  ///
+  /// アイコン取得
+  ///
+  Future<Uint8List?> getIcon() async {
+    if (state == null || state!.iconFileId == null) {
+      return null;
+    }
+
+    final storage = Storage(_myClient.client);
+    final result = await storage.getFileDownload(
+      bucketId: Constant.bucketId,
+      fileId: state!.iconFileId!,
+    );
+
+    return result;
   }
 
   ///

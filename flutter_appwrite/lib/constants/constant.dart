@@ -13,4 +13,7 @@ class Constant {
 
   /// ユーザーコレクションID
   static String userCollectionId = 'xxxxxxxxxxxxxxxxxxxx';
+
+  /// バケットID
+  static String bucketId = 'xxxxxxxxxxxxxxxxxxxx';
 }
