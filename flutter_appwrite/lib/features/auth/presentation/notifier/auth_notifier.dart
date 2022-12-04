@@ -3,36 +3,33 @@ import 'dart:developer';
 import 'package:appwrite/appwrite.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../constants/constant.dart';
+import '../../../../utils/my_client.dart';
 import '../../data/model/user.dart';
 
 /// authNotifierProvider
 final authNotifierProvider =
     StateNotifierProvider.autoDispose<AuthNotifier, User?>(
-  (ref) => AuthNotifier()..init(),
+  (ref) => AuthNotifier(ref.read(clientProvider))..init(),
 );
 
 ///
 /// AuthNotifier
 ///
 class AuthNotifier extends StateNotifier<User?> {
-  AuthNotifier() : super(null);
+  AuthNotifier(this._myClient) : super(null);
 
-  late Client client;
+  final MyClient _myClient;
   late Account account;
-  late Storage storage;
+  late Databases databases;
   late String _sessionId;
 
   ///
   /// 初期処理
   ///
   void init() {
-    client = Client();
-    client
-        .setEndpoint('https://localhost/v1') // エンドポイント
-        .setProject('xxxxxxxxxxxxxxxxxxxx') // プロジェクトID
-        .setSelfSigned();
-    account = Account(client);
-    storage = Storage(client);
+    account = Account(_myClient.client);
+    databases = Databases(_myClient.client);
   }
 
   ///
@@ -50,11 +47,35 @@ class AuthNotifier extends StateNotifier<User?> {
         password: password,
       );
 
-      state = User.fromJson(result.toMap());
       log('create: success');
       log(result.toMap().toString());
     } on AppwriteException catch (e) {
       log('create: ${e.message!}');
+    }
+  }
+
+  ///
+  /// ユーザーのドキュメント作成
+  ///
+  Future<void> createDocumentUser() async {
+    if (state == null) {
+      return;
+    }
+
+    try {
+      final document = await databases.createDocument(
+        databaseId: Constant.databaseId,
+        collectionId: Constant.userCollectionId,
+        documentId: state!.id,
+        data: {
+          'iconUrl': null,
+        },
+      );
+
+      log('createUser: success');
+      log(document.toMap().toString());
+    } on AppwriteException catch (e) {
+      log('createUser: ${e.message!}');
     }
   }
 
@@ -67,8 +88,9 @@ class AuthNotifier extends StateNotifier<User?> {
     try {
       final result =
           await account.createEmailSession(email: email, password: password);
-      state = await _getAccount();
       _sessionId = result.$id;
+      state = await _getAccount();
+
       log('login: success');
       log(result.toMap().toString());
     } on AppwriteException catch (e) {
@@ -86,6 +108,34 @@ class AuthNotifier extends StateNotifier<User?> {
       log('logout: success');
     } on AppwriteException catch (e) {
       log('logout: ${e.message!}');
+    }
+  }
+
+  ///
+  /// アカウント名変更
+  /// @param name: ユーザー名
+  ///
+  Future<void> updateName(String name) async {
+    try {
+      final result = await account.updateName(name: name);
+      state = User.fromJson(result.toMap());
+      log('updateName: success');
+      log(result.toMap().toString());
+    } on AppwriteException catch (e) {
+      log('updateName: ${e.message!}');
+    }
+  }
+
+  ///
+  /// アイコン変更
+  /// @param iconUrl: アイコンURL
+  ///
+  Future<void> updateIconUrl(String iconUrl) async {
+    try {
+      state = state?.copyWith(iconUrl: iconUrl);
+      log('updateIconUrl: success');
+    } on AppwriteException catch (e) {
+      log('updateIconUrl: ${e.message!}');
     }
   }
 
