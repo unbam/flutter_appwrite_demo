@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/model/user.dart';
 
+/// authNotifierProvider
 final authNotifierProvider =
     StateNotifierProvider.autoDispose<AuthNotifier, User?>(
   (ref) => AuthNotifier()..init(),
@@ -19,6 +20,7 @@ class AuthNotifier extends StateNotifier<User?> {
   late Client client;
   late Account account;
   late Storage storage;
+  late String _sessionId;
 
   ///
   /// 初期処理
@@ -49,7 +51,8 @@ class AuthNotifier extends StateNotifier<User?> {
       );
 
       state = User.fromJson(result.toMap());
-      log('create: success userId<${result.$id}>');
+      log('create: success');
+      log(result.toMap().toString());
     } on AppwriteException catch (e) {
       log('create: ${e.message!}');
     }
@@ -65,7 +68,9 @@ class AuthNotifier extends StateNotifier<User?> {
       final result =
           await account.createEmailSession(email: email, password: password);
       state = await _getAccount();
-      log('login: success userId<${result.userId}>');
+      _sessionId = result.$id;
+      log('login: success');
+      log(result.toMap().toString());
     } on AppwriteException catch (e) {
       log('login: ${e.message!}');
     }
@@ -76,7 +81,7 @@ class AuthNotifier extends StateNotifier<User?> {
   ///
   Future<void> logout() async {
     try {
-      await account.deleteSession(sessionId: 'current');
+      await account.deleteSession(sessionId: _sessionId);
       state = null;
       log('logout: success');
     } on AppwriteException catch (e) {

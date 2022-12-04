@@ -42,7 +42,7 @@ class MyApp extends HookConsumerWidget {
               ElevatedButton(
                 child: const Text('ユーザー作成'),
                 onPressed: () async {
-                  authNotifier.create('test2', 'test2@example.com', 'password');
+                  authNotifier.create('test', 'test@example.com', 'password');
                 },
               ),
               const SizedBox(
@@ -51,7 +51,7 @@ class MyApp extends HookConsumerWidget {
               ElevatedButton(
                 child: const Text('ログイン'),
                 onPressed: () async {
-                  authNotifier.login('test2@example.com', 'password');
+                  authNotifier.login('test@example.com', 'password');
                 },
               ),
               const SizedBox(
